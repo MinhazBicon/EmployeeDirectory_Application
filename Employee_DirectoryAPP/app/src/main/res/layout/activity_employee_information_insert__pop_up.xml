@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="5"
+    android:background="#F6F3B7"
+    android:padding="20dp"
+    tools:context=".Employee_information_insert_PopUp">
+
+    <EditText
+        android:id="@+id/Name_id"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#70C1F3"
+        android:textStyle="normal"
+        android:textSize="20sp"
+        android:textColor="#ffe"
+        android:textColorHint="#ffe"
+        android:textAlignment="center"
+        android:hint="Name"
+        />
+
+    <EditText
+        android:id="@+id/Age_id"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#71C2F4"
+        android:textStyle="normal"
+        android:textSize="20sp"
+        android:textColorHint="#ffe"
+        android:textColor="#ffe"
+        android:hint="Age"
+        android:textAlignment="center"
+
+        />
+
+    <EditText
+        android:id="@+id/Gender_id"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#79C6F6"
+        android:textStyle="normal"
+        android:textSize="20sp"
+        android:textColor="#ffe"
+        android:textAlignment="center"
+        android:textColorHint="#ffe"
+        android:hint="Gender"
+        />
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginRight="5dp"
+        android:weightSum="3">
+
+       <Button
+           android:id="@+id/ChoseImage_btn"
+           android:layout_margin="20dp"
+           android:layout_weight="1"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:textColor="#ffe"
+           android:textAlignment="center"
+           android:textSize="20sp"
+           android:textStyle="normal"
+           android:background="#5DF49C"
+           android:textAllCaps="false"
+           android:text="Choose Image"
+           />
+        <ImageView
+            android:layout_gravity="center"
+            android:id="@+id/choose_image_view"
+            android:layout_margin="5dp"
+            android:layout_weight="2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_launcher_background"
+
+            />
+
+   </LinearLayout>
+
+
+    <Button
+        android:id="@+id/Submit_btn"
+        android:layout_margin="20dp"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textColor="#ffe"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:background="#5DF49D"
+        android:textAllCaps="false"
+        android:text="Submit"
+        />
+
+</LinearLayout>

@@ -12,11 +12,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
-    private Button Add_employee_btn;
+    private FloatingActionButton Add_employee_btn;
     ArrayList<Employee> employees_list=null;
     Employee_Adapter employee_adapter ;
     @Override

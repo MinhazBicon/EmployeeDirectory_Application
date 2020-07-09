@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="5"
-    android:background="#F6F3B7"
+    android:background="#B2F8EE"
     android:padding="20dp"
     tools:context=".Employee_information_insert_PopUp">
 
@@ -31,7 +31,7 @@
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#71C2F4"
+        android:background="#71C5F8"
         android:textStyle="normal"
         android:textSize="20sp"
         android:textColorHint="#ffe"
@@ -72,9 +72,9 @@
            android:layout_height="match_parent"
            android:textColor="#ffe"
            android:textAlignment="center"
-           android:textSize="20sp"
-           android:textStyle="normal"
-           android:background="#5DF49C"
+           android:textSize="17sp"
+           android:textStyle="italic"
+           android:background="#FFD600"
            android:textAllCaps="false"
            android:text="Choose Image"
            />
@@ -102,8 +102,8 @@
         android:textColor="#ffe"
         android:textAlignment="center"
         android:textSize="20sp"
-        android:textStyle="bold"
-        android:background="#5DF49D"
+        android:textStyle="italic"
+        android:background="#FFD600"
         android:textAllCaps="false"
         android:text="Submit"
         />

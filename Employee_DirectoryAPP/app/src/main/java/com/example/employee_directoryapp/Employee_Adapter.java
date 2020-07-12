@@ -17,6 +17,15 @@ import java.util.ArrayList;
 public class Employee_Adapter extends  RecyclerView.Adapter<Employee_Adapter.employee_ViewHolder> {
     private Context context;
     private ArrayList<Employee> EmployeeList;
+    private OnLongItemClickListener empListener;
+
+    public interface OnLongItemClickListener{
+        void ONLongItemClick(int position);
+    }
+
+    public void SetOnItemClickListener(OnLongItemClickListener longItemClickListener){
+        empListener = longItemClickListener;
+    }
 
     public Employee_Adapter(Context context, ArrayList<Employee> employeeList) {
         this.context = context;
@@ -40,6 +49,7 @@ public class Employee_Adapter extends  RecyclerView.Adapter<Employee_Adapter.emp
          holder.name.setText(employee.getName());
          holder.age.setText(employee.getAge());
          holder.gender.setText(employee.getGender());
+
     }
 
     @Override
@@ -58,6 +68,18 @@ public class Employee_Adapter extends  RecyclerView.Adapter<Employee_Adapter.emp
             age = itemView.findViewById(R.id.cardView_employee_age);
             gender = itemView.findViewById(R.id.cardView_employee_gender);
 
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (empListener != null){
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION){
+                            empListener.ONLongItemClick(position);
+                        }
+                    }
+                    return true;
+                }
+            });
         }
     }
 }

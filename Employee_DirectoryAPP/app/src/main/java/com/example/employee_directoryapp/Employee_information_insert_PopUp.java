@@ -54,7 +54,7 @@ public class Employee_information_insert_PopUp extends Activity implements View.
         int width = displayMetrics.widthPixels;
         int height = displayMetrics.heightPixels;
         // getWindow().setBackgroundDrawableResource(flag);
-        getWindow().setLayout((int) (width*.8),(int) (height*.6));
+        getWindow().setLayout((int) (width*.85),(int) (height*.65));
 
         //setting the Popup window position
         WindowManager.LayoutParams params = getWindow().getAttributes();
@@ -76,6 +76,7 @@ public class Employee_information_insert_PopUp extends Activity implements View.
     @Override
     public void onClick(View view) {
         if (view == chose_image_btn){
+           // request for gallery
             ActivityCompat.requestPermissions(
                     Employee_information_insert_PopUp.this,
                     new  String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
@@ -100,7 +101,7 @@ public class Employee_information_insert_PopUp extends Activity implements View.
 
     }
 
-    private byte[] imageViewTOByte(ImageView image) {
+    public static byte[] imageViewTOByte(ImageView image) {
         Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG,100, byteArrayOutputStream);

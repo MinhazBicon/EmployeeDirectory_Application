@@ -29,6 +29,21 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         sqLiteStatement.bindBlob(4, image);
         sqLiteStatement.executeInsert();
     }
+
+    public void UpdateData(String name, String age, String gender, byte[] image, int id){
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        String sql = "UPDATE EMPLOYEE SET Name = ?, Age = ?, Gender = ?, IMAGE = ? WHERE Id = ?";
+        SQLiteStatement sqLiteStatement = sqLiteDatabase.compileStatement(sql);
+        sqLiteStatement.bindString(1,name);
+        sqLiteStatement.bindString(2,age);
+        sqLiteStatement.bindString(3,gender);
+        sqLiteStatement.bindBlob(4,image);
+        sqLiteStatement.bindDouble(5,(double)id);
+        sqLiteStatement.execute();
+        sqLiteDatabase.close();
+    }
+
+
     public Cursor getData(String sql){
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         Cursor cursor= sqLiteDatabase.rawQuery(sql,null);

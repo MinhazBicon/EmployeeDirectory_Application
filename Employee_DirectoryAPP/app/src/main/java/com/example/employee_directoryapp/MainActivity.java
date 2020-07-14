@@ -185,10 +185,12 @@ public class MainActivity extends AppCompatActivity {
                   String UpdateAge = update_age.getText().toString();
                   String UpdateGender = update_gender.getText().toString();
                   byte[] image= Employee_information_insert_PopUp.imageViewTOByte(update_imageview);
-                  sqLiteHelper.UpdateData(UpdateName.trim(),UpdateAge.trim(),UpdateGender.trim(),image,position);
-                  startActivity(new Intent(MainActivity.this,MainActivity.class));
-                  dialog.dismiss();
-                  Toast.makeText(getApplicationContext(),"Updated Successful",Toast.LENGTH_SHORT).show();
+
+                 sqLiteHelper.UpdateData(UpdateName,UpdateAge.trim(),UpdateGender.trim(),image,position);
+                 startActivity(new Intent(MainActivity.this,MainActivity.class));
+                 dialog.dismiss();
+                 Toast.makeText(getApplicationContext(),"Updated Successful",Toast.LENGTH_SHORT).show();
+
              }catch (Exception error){
                  error.getStackTrace();
              }

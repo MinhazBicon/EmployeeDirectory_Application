@@ -43,11 +43,20 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         sqLiteDatabase.close();
     }
 
-
     public Cursor getData(String sql){
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
         Cursor cursor= sqLiteDatabase.rawQuery(sql,null);
        return cursor;
+    }
+
+    public void DeleteData(int id){
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        String sql = "DELETE FROM EMPLOYEE WHERE Id = ?";
+        SQLiteStatement sqLiteStatement = sqLiteDatabase.compileStatement(sql);
+        sqLiteStatement.executeUpdateDelete();
+        sqLiteStatement.bindDouble(1, (double)id);
+        sqLiteStatement.execute();
+        sqLiteDatabase.close();
     }
 
 

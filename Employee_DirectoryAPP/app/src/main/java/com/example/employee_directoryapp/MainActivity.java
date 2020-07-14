@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private Button update_Choose_image_btn, update_submit;
     ArrayList<Employee> employees_list;
     Employee_Adapter employee_adapter ;
+    private MySQLiteHelper sqLiteHelper;
+    final int REQUEST_CODE_GALLERY = 777;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         employees_list = new ArrayList<>();
 
          //SQLite database table create
-         final  MySQLiteHelper sqLiteHelper = new MySQLiteHelper(this, "Employee.DB", null, 2);
+        sqLiteHelper = new MySQLiteHelper(this, "Employee.DB", null, 2);
         sqLiteHelper.queryData("CREATE TABLE IF NOT EXISTS EMPLOYEE (Id INTEGER PRIMARY KEY AUTOINCREMENT, Name VARCHAR, Age VARCHAR, Gender VARCHAR, IMAGE BLOG )");
 
         //getting all data from sqLite_database
@@ -108,7 +110,11 @@ public class MainActivity extends AppCompatActivity {
                           UpdateDialog(MainActivity.this,arrID.get(position));
                       } else {
                           //Delete
-                          Toast.makeText(getApplicationContext(),"Deleted",Toast.LENGTH_SHORT).show();
+                          Cursor cursor1 = sqLiteHelper.getData("SELECT Id FROM EMPLOYEE");
+                          ArrayList<Integer> arrID = new ArrayList<>();
+                          while (cursor1.moveToNext()){
+                              arrID.add(cursor1.getInt(0));}
+                          deleteDialog(arrID.get(position));
                       }
                     }
                 });
@@ -117,22 +123,44 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void deleteDialog(final int position){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Warning !!!");
+        builder.setMessage("Are you sure want to delete this?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+             try {
+                 sqLiteHelper.DeleteData(position);
+                 startActivity(new Intent(MainActivity.this,MainActivity.class));
+                 dialogInterface.dismiss();
+                 Toast.makeText(getApplicationContext(),"Delete Successful",Toast.LENGTH_SHORT).show();
+             }catch (Exception error){
+                 error.getStackTrace();
+             }
+            }
+        });
 
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+         builder.show();
+    }
 
-    private void  UpdateDialog(Activity activity, final int position) {
+    private void  UpdateDialog(final Activity activity, final int position) {
         final Dialog dialog = new Dialog(activity);
         dialog.setContentView(R.layout.employee_update_page);
         dialog.setTitle("Update");
+
         update_Choose_image_btn= dialog.findViewById(R.id.update_choose_image_btn);
         update_name =dialog.findViewById(R.id.update_name);
         update_age =dialog.findViewById(R.id.update_age);
         update_gender =dialog.findViewById(R.id.update_gender);
         update_imageview =dialog.findViewById(R.id.update_imageview);
         update_submit =dialog.findViewById(R.id.update_btn);
-
-        final String UpdateName = update_name.getText().toString();
-        final String UpdateAge = update_age.getText().toString();
-        final String UpdateGender = update_gender.getText().toString();
 
         int width = (int) (activity.getResources().getDisplayMetrics().widthPixels * 0.9);
         int height = (int) (activity.getResources().getDisplayMetrics().heightPixels * 0.7);
@@ -145,32 +173,38 @@ public class MainActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(
                         MainActivity.this,
                         new  String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
-                        777);
+                        REQUEST_CODE_GALLERY);
             }
         });
 
         update_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                byte[] image= Employee_information_insert_PopUp.imageViewTOByte(update_imageview);
-                Employee_information_insert_PopUp.mySQLiteHelper.UpdateData(UpdateName.trim(),UpdateAge.trim(),
-                                                                           UpdateGender.trim(),image,position);
-                dialog.dismiss();
-                Toast.makeText(getApplicationContext(),"Updated succsessful",Toast.LENGTH_SHORT).show();
+             try {
+                  String UpdateName = update_name.getText().toString();
+                  String UpdateAge = update_age.getText().toString();
+                  String UpdateGender = update_gender.getText().toString();
+                  byte[] image= Employee_information_insert_PopUp.imageViewTOByte(update_imageview);
+                  sqLiteHelper.UpdateData(UpdateName.trim(),UpdateAge.trim(),UpdateGender.trim(),image,position);
+                  startActivity(new Intent(MainActivity.this,MainActivity.class));
+                  dialog.dismiss();
+                  Toast.makeText(getApplicationContext(),"Updated Successful",Toast.LENGTH_SHORT).show();
+             }catch (Exception error){
+                 error.getStackTrace();
+             }
             }
-        });
 
+        });
 
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == 777){
+        if(requestCode == REQUEST_CODE_GALLERY){
             if (grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType("image/*");
-                startActivityForResult(intent, 777);
+                startActivityForResult(intent, REQUEST_CODE_GALLERY);
             }
             else {
                 Toast.makeText(getApplicationContext(),"You don't permission to access file location!",Toast.LENGTH_SHORT).show();
@@ -182,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 777 && resultCode == RESULT_OK && data != null){
+        if (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK && data != null){
             Uri uri = data.getData();
 
             try {

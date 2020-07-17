@@ -101,7 +101,7 @@ public class Employee_information_insert_PopUp extends Activity implements View.
 
     }
 
-    public static byte[] imageViewTOByte(ImageView image) {
+    public static   byte[] imageViewTOByte(ImageView image) {
         Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG,100, byteArrayOutputStream);

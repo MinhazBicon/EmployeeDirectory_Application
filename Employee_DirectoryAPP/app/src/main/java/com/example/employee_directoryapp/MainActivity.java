@@ -19,9 +19,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -42,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private FloatingActionButton Add_employee_btn;
     private EditText update_name, update_age, update_gender;
-    private ImageView update_imageview;
+    private ImageView Update_imageview;
     private Button update_Choose_image_btn, update_submit;
     ArrayList<Employee> employees_list;
     Employee_Adapter employee_adapter ;
@@ -102,13 +104,27 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                       if (i == 0){
                           //Update
-                          Cursor cursor1 = sqLiteHelper.getData("SELECT Id FROM EMPLOYEE");
+
+                          Cursor cursor1 = sqLiteHelper.getData("SELECT * FROM EMPLOYEE");
                           ArrayList<Integer> arrID = new ArrayList<>();
+                          ArrayList<String> arrName  = new ArrayList<>();
+                          ArrayList<String> arrAge  = new ArrayList<>();
+                          ArrayList<String> arrGender  = new ArrayList<>();
+                          ArrayList<byte[]> arrImage  = new ArrayList<>();
                           while (cursor1.moveToNext()){
-                             arrID.add(cursor1.getInt(0));}
+                             arrID.add(cursor1.getInt(0));
+                             arrName.add(cursor1.getString(1));
+                             arrAge.add(cursor1.getString(2));
+                             arrGender.add(cursor1.getString(3));
+                             arrImage.add(cursor1.getBlob(4));
+                          }
                          // update dialog show
-                          UpdateDialog(MainActivity.this,arrID.get(position));
-                      } else {
+                          UpdateDialog(MainActivity.this,arrID.get(position),
+                                       arrName.get(position),arrAge.get(position),
+                                       arrGender.get(position),arrImage.get(position));
+                      }
+
+                      else {
                           //Delete
                           Cursor cursor1 = sqLiteHelper.getData("SELECT Id FROM EMPLOYEE");
                           ArrayList<Integer> arrID = new ArrayList<>();
@@ -150,22 +166,62 @@ public class MainActivity extends AppCompatActivity {
          builder.show();
     }
 
-    private void  UpdateDialog(final Activity activity, final int position) {
+    private void  UpdateDialog(final Activity activity, final int Position, final String NAME, final String AGE, final String Gender, final byte[] IMAGE) {
         final Dialog dialog = new Dialog(activity);
         dialog.setContentView(R.layout.employee_update_page);
         dialog.setTitle("Update");
-
         update_Choose_image_btn= dialog.findViewById(R.id.update_choose_image_btn);
         update_name =dialog.findViewById(R.id.update_name);
         update_age =dialog.findViewById(R.id.update_age);
         update_gender =dialog.findViewById(R.id.update_gender);
-        update_imageview =dialog.findViewById(R.id.update_imageview);
+        Update_imageview =dialog.findViewById(R.id.update_imageview);
         update_submit =dialog.findViewById(R.id.update_btn);
 
         int width = (int) (activity.getResources().getDisplayMetrics().widthPixels * 0.9);
         int height = (int) (activity.getResources().getDisplayMetrics().heightPixels * 0.7);
         dialog.getWindow().setLayout(width, height);
         dialog.show();
+
+        update_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    //covert all input to string and byte
+                    String UpdateName = update_name.getText().toString();
+                    String UpdateAge = update_age.getText().toString();
+                    String UpdateGender = update_gender.getText().toString();
+                    byte[] image;
+                   //checking is dialog_box is empty
+                    if (Update_imageview.getDrawable()==null){
+                      image = IMAGE;
+                     }
+                    else {
+                      image= imageViewTOByte(Update_imageview);
+                    }
+                    if(UpdateName.isEmpty()){
+                        UpdateName= NAME;
+                    }
+                    if (UpdateAge.isEmpty()){
+                        UpdateAge = AGE;
+                    }
+                    if (UpdateGender.isEmpty()){
+                        UpdateGender = Gender;
+                    }
+                    if (UpdateName.isEmpty() && UpdateAge.isEmpty() && UpdateGender.isEmpty()&& Update_imageview.getDrawable()==null){
+                        Toast.makeText(getApplicationContext(),"Nothing to update>.\ntry again..!!",Toast.LENGTH_SHORT).show();
+                    }
+                      sqLiteHelper.UpdateData(UpdateName,UpdateAge,UpdateGender,image,Position);
+                      startActivity(new Intent(MainActivity.this,MainActivity.class));
+                      dialog.dismiss();
+                      Toast.makeText(getApplicationContext(),"Update Successful",Toast.LENGTH_SHORT).show();
+
+             }catch (Exception error) {
+                    error.getStackTrace();
+                }
+
+            }
+
+        });
         update_Choose_image_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -177,27 +233,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        update_submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-             try {
-                  String UpdateName = update_name.getText().toString();
-                  String UpdateAge = update_age.getText().toString();
-                  String UpdateGender = update_gender.getText().toString();
-                  byte[] image= Employee_information_insert_PopUp.imageViewTOByte(update_imageview);
+    }
 
-                 sqLiteHelper.UpdateData(UpdateName,UpdateAge.trim(),UpdateGender.trim(),image,position);
-                 startActivity(new Intent(MainActivity.this,MainActivity.class));
-                 dialog.dismiss();
-                 Toast.makeText(getApplicationContext(),"Updated Successful",Toast.LENGTH_SHORT).show();
 
-             }catch (Exception error){
-                 error.getStackTrace();
-             }
-            }
 
-        });
-
+    public  byte[] imageViewTOByte(ImageView image) {
+        Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100, byteArrayOutputStream);
+        byte[] bytes_array = byteArrayOutputStream.toByteArray();
+        return bytes_array;
     }
 
     @Override
@@ -217,14 +262,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK && data != null){
             Uri uri = data.getData();
 
             try {
                 InputStream inputStream = getContentResolver().openInputStream(uri);
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                update_imageview.setImageBitmap(bitmap);
+                Update_imageview.setImageBitmap(bitmap);
+
 
             }catch (FileNotFoundException e){
                 e.printStackTrace();

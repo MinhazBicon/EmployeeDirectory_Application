@@ -87,14 +87,19 @@ public class Employee_information_insert_PopUp extends Activity implements View.
              String age = Age.getText().toString();
              String gender = Gender.getText().toString();
 
-           try {
-               mySQLiteHelper.InsertData(name,age,gender,imageViewTOByte(choose_imageView));
-               Toast.makeText(getApplicationContext(),"Record added successful",Toast.LENGTH_SHORT).show();
-               startActivity(new Intent(Employee_information_insert_PopUp.this,MainActivity.class));
-               finish();
-           }catch (Exception e){
-               e.printStackTrace();
-           }
+             if (name.isEmpty() || age.isEmpty() || gender.isEmpty() || choose_imageView.getDrawable()==null){
+                 Toast.makeText(getApplicationContext(),"Enter the information",Toast.LENGTH_SHORT).show();
+             }
+             else {
+                 try {
+                     mySQLiteHelper.InsertData(name,age,gender,imageViewTOByte(choose_imageView));
+                     Toast.makeText(getApplicationContext(),"Record added successful",Toast.LENGTH_SHORT).show();
+                     startActivity(new Intent(Employee_information_insert_PopUp.this,MainActivity.class));
+                     finish();
+                 }catch (Exception e){
+                     e.printStackTrace();
+                 }
+             }
 
         }
 

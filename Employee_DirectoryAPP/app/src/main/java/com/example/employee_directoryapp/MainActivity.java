@@ -26,6 +26,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -54,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        setTitle("Employee List");
 
         Add_employee_btn = findViewById(R.id.add_employee_btn);
         recyclerView = findViewById(R.id.recyclerview_id);
@@ -234,9 +237,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
-
-
     public  byte[] imageViewTOByte(ImageView image) {
         Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
